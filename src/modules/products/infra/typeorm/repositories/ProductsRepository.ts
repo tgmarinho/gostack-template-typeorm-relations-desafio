@@ -1,4 +1,7 @@
-import { getRepository, Repository, In } from 'typeorm';
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
+
+import { getRepository, Repository } from 'typeorm';
 
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
@@ -35,7 +38,18 @@ class ProductsRepository implements IProductsRepository {
   public async updateQuantity(
     products: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    throw new Error('Method not implemented.');
+    for (const product of products) {
+      const prodQuantity =
+        (await this.ormRepository.findOne(product.id))?.quantity || 0;
+      await this.ormRepository.save({
+        ...product,
+        quantity: prodQuantity - product.quantity,
+      });
+    }
+
+    const prods = await this.findAllById(products);
+
+    return prods;
   }
 }
 

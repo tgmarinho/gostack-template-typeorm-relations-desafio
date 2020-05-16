@@ -153,157 +153,157 @@ describe('App', () => {
     );
   });
 
-  // it('should not be able to create an order with a invalid customer', async () => {
-  //   const response = await request(app).post('/orders').send({
-  //     customer_id: '6a1922c8-af6e-470e-9a34-621cb0643911',
-  //   });
+  it('should not be able to create an order with a invalid customer', async () => {
+    const response = await request(app).post('/orders').send({
+      customer_id: '6a1922c8-af6e-470e-9a34-621cb0643911',
+    });
 
-  //   expect(response.status).toEqual(400);
-  // });
+    expect(response.status).toEqual(400);
+  });
 
-  // it('should not be able to create an order with invalid products', async () => {
-  //   const customer = await request(app).post('/customers').send({
-  //     name: 'Rocketseat',
-  //     email: 'oi@rocketseat.com.br',
-  //   });
+  it('should not be able to create an order with invalid products', async () => {
+    const customer = await request(app).post('/customers').send({
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
+    });
 
-  //   const response = await request(app)
-  //     .post('/orders')
-  //     .send({
-  //       customer_id: customer.body.id,
-  //       products: [
-  //         {
-  //           id: '6a1922c8-af6e-470e-9a34-621cb0643911',
-  //         },
-  //       ],
-  //     });
+    const response = await request(app)
+      .post('/orders')
+      .send({
+        customer_id: customer.body.id,
+        products: [
+          {
+            id: '6a1922c8-af6e-470e-9a34-621cb0643911',
+          },
+        ],
+      });
 
-  //   expect(response.status).toEqual(400);
-  // });
+    expect(response.status).toEqual(400);
+  });
 
-  // it('should not be able to create an order with products with insufficient quantities', async () => {
-  //   const customer = await request(app).post('/customers').send({
-  //     name: 'Rocketseat',
-  //     email: 'oi@rocketseat.com.br',
-  //   });
+  it('should not be able to create an order with products with insufficient quantities', async () => {
+    const customer = await request(app).post('/customers').send({
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
+    });
 
-  //   const product = await request(app).post('/products').send({
-  //     name: 'Produto 01',
-  //     price: 500,
-  //     quantity: 50,
-  //   });
+    const product = await request(app).post('/products').send({
+      name: 'Produto 01',
+      price: 500,
+      quantity: 50,
+    });
 
-  //   const response = await request(app)
-  //     .post('/orders')
-  //     .send({
-  //       customer_id: customer.body.id,
-  //       products: [
-  //         {
-  //           id: product.body.id,
-  //           quantity: 500,
-  //         },
-  //       ],
-  //     });
+    const response = await request(app)
+      .post('/orders')
+      .send({
+        customer_id: customer.body.id,
+        products: [
+          {
+            id: product.body.id,
+            quantity: 500,
+          },
+        ],
+      });
 
-  //   expect(response.status).toEqual(400);
-  // });
+    expect(response.status).toEqual(400);
+  });
 
-  // it('should be able to subtract an product total quantity when it is ordered', async () => {
-  //   const productsRepository = getRepository(Product);
+  it('should be able to subtract an product total quantity when it is ordered', async () => {
+    const productsRepository = getRepository(Product);
 
-  //   const customer = await request(app).post('/customers').send({
-  //     name: 'Rocketseat',
-  //     email: 'oi@rocketseat.com.br',
-  //   });
+    const customer = await request(app).post('/customers').send({
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
+    });
 
-  //   const product = await request(app).post('/products').send({
-  //     name: 'Produto 01',
-  //     price: 500,
-  //     quantity: 50,
-  //   });
+    const product = await request(app).post('/products').send({
+      name: 'Produto 01',
+      price: 500,
+      quantity: 50,
+    });
 
-  //   await request(app)
-  //     .post('/orders')
-  //     .send({
-  //       customer_id: customer.body.id,
-  //       products: [
-  //         {
-  //           id: product.body.id,
-  //           quantity: 5,
-  //         },
-  //       ],
-  //     });
+    await request(app)
+      .post('/orders')
+      .send({
+        customer_id: customer.body.id,
+        products: [
+          {
+            id: product.body.id,
+            quantity: 5,
+          },
+        ],
+      });
 
-  //   let foundProduct = await productsRepository.findOne(product.body.id);
+    let foundProduct = await productsRepository.findOne(product.body.id);
 
-  //   expect(foundProduct).toEqual(
-  //     expect.objectContaining({
-  //       quantity: 45,
-  //     }),
-  //   );
+    expect(foundProduct).toEqual(
+      expect.objectContaining({
+        quantity: '45',
+      }),
+    );
 
-  //   await request(app)
-  //     .post('/orders')
-  //     .send({
-  //       customer_id: customer.body.id,
-  //       products: [
-  //         {
-  //           id: product.body.id,
-  //           quantity: 5,
-  //         },
-  //       ],
-  //     });
+    await request(app)
+      .post('/orders')
+      .send({
+        customer_id: customer.body.id,
+        products: [
+          {
+            id: product.body.id,
+            quantity: 5,
+          },
+        ],
+      });
 
-  //   foundProduct = await productsRepository.findOne(product.body.id);
+    foundProduct = await productsRepository.findOne(product.body.id);
 
-  //   expect(foundProduct).toEqual(
-  //     expect.objectContaining({
-  //       quantity: 40,
-  //     }),
-  //   );
-  // });
+    expect(foundProduct).toEqual(
+      expect.objectContaining({
+        quantity: '40',
+      }),
+    );
+  });
 
-  // it('should be able to list one specific order', async () => {
-  //   const customer = await request(app).post('/customers').send({
-  //     name: 'Rocketseat',
-  //     email: 'oi@rocketseat.com.br',
-  //   });
+  it('should be able to list one specific order', async () => {
+    const customer = await request(app).post('/customers').send({
+      name: 'Rocketseat',
+      email: 'oi@rocketseat.com.br',
+    });
 
-  //   const product = await request(app).post('/products').send({
-  //     name: 'Produto 01',
-  //     price: 500,
-  //     quantity: 50,
-  //   });
+    const product = await request(app).post('/products').send({
+      name: 'Produto 01',
+      price: 500,
+      quantity: 50,
+    });
 
-  //   const order = await request(app)
-  //     .post('/orders')
-  //     .send({
-  //       customer_id: customer.body.id,
-  //       products: [
-  //         {
-  //           id: product.body.id,
-  //           quantity: 5,
-  //         },
-  //       ],
-  //     });
+    const order = await request(app)
+      .post('/orders')
+      .send({
+        customer_id: customer.body.id,
+        products: [
+          {
+            id: product.body.id,
+            quantity: 5,
+          },
+        ],
+      });
 
-  //   const response = await request(app).get(`/orders/${order.body.id}`);
+    const response = await request(app).get(`/orders/${order.body.id}`);
 
-  //   expect(response.body).toEqual(
-  //     expect.objectContaining({
-  //       customer: expect.objectContaining({
-  //         id: customer.body.id,
-  //         name: 'Rocketseat',
-  //         email: 'oi@rocketseat.com.br',
-  //       }),
-  //       order_products: expect.arrayContaining([
-  //         expect.objectContaining({
-  //           product_id: product.body.id,
-  //           price: '500.00',
-  //           quantity: 5,
-  //         }),
-  //       ]),
-  //     }),
-  //   );
-  // });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        customer: expect.objectContaining({
+          id: customer.body.id,
+          name: 'Rocketseat',
+          email: 'oi@rocketseat.com.br',
+        }),
+        order_products: expect.arrayContaining([
+          expect.objectContaining({
+            product_id: product.body.id,
+            price: '500.00',
+            quantity: '5',
+          }),
+        ]),
+      }),
+    );
+  });
 });

@@ -36,6 +36,14 @@ class CreateProductService {
       throw new AppError('Customer informed not exists');
     }
 
+    const checkNegativesValues = products.some(
+      product => product.quantity <= 0,
+    );
+
+    if (checkNegativesValues) {
+      throw new AppError('You cannot set quantity less than zero');
+    }
+
     const productsFound = await this.productsRepository.findAllById(products);
 
     if (productsFound.length !== products.length) {
@@ -44,16 +52,30 @@ class CreateProductService {
       );
     }
 
-    const prods = productsFound.map(p => ({
-      product_id: p.id,
-      price: p.price,
-      quantity: products.find(p2 => p2.id === p.id)?.quantity || 0,
+    const isOutOfStock = productsFound.some(pf =>
+      products.some(ps => {
+        return pf.quantity - ps.quantity < 0;
+      }),
+    );
+
+    if (isOutOfStock) {
+      throw new AppError('There is one or more products that is out of stock');
+    }
+
+    const productsMapped = productsFound.map(productMap => ({
+      product_id: productMap.id,
+      price: productMap.price,
+      quantity:
+        products.find(productFind => productFind.id === productMap.id)
+          ?.quantity || 0,
     }));
 
     const order = await this.ordersRepository.create({
       customer,
-      products: prods,
+      products: productsMapped,
     });
+
+    await this.productsRepository.updateQuantity(products);
 
     return order;
   }
