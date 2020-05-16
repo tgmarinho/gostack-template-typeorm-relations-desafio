@@ -33,7 +33,7 @@ class CreateProductService {
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
     const customer = await this.customersRepository.findById(customer_id);
     if (!customer) {
-      throw new AppError('Customer informed not exists');
+      throw new AppError('The customer informed not exists');
     }
 
     const checkNegativesValues = products.some(
@@ -47,19 +47,19 @@ class CreateProductService {
     const productsFound = await this.productsRepository.findAllById(products);
 
     if (productsFound.length !== products.length) {
-      throw new AppError(
-        'There is one or more products that is not located in database',
-      );
+      throw new AppError('There are one or more products that are not found');
     }
 
-    const isOutOfStock = productsFound.some(pf =>
-      products.some(ps => {
-        return pf.quantity - ps.quantity < 0;
+    const isOutOfStock = productsFound.some(productSome =>
+      products.some(prodSome => {
+        return productSome.quantity - prodSome.quantity < 0;
       }),
     );
 
     if (isOutOfStock) {
-      throw new AppError('There is one or more products that is out of stock');
+      throw new AppError(
+        'There are one or more products that are out of stock',
+      );
     }
 
     const productsMapped = productsFound.map(productMap => ({

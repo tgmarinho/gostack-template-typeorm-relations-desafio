@@ -238,7 +238,7 @@ describe('App', () => {
 
     expect(foundProduct).toEqual(
       expect.objectContaining({
-        quantity: '45',
+        quantity: 45,
       }),
     );
 
@@ -258,7 +258,7 @@ describe('App', () => {
 
     expect(foundProduct).toEqual(
       expect.objectContaining({
-        quantity: '40',
+        quantity: 40,
       }),
     );
   });
@@ -300,7 +300,7 @@ describe('App', () => {
           expect.objectContaining({
             product_id: product.body.id,
             price: '500.00',
-            quantity: '5',
+            quantity: 5,
           }),
         ]),
       }),
