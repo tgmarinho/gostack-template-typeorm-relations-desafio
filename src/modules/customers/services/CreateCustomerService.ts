@@ -24,7 +24,7 @@ class CreateCustomerService {
     if (checkIfExists) {
       throw new AppError(
         'Already exists a customer registered with this email',
-        401,
+        400,
       );
     }
 
