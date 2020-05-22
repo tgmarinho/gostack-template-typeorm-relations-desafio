@@ -50,13 +50,12 @@ class CreateProductService {
       throw new AppError('There are one or more products that are not found');
     }
 
-
-    const isOutOfStock = products.some(productSome =>
-      {
-        const  quantityInStock = productsFound.find(productFound => productFound.id === productSome.id)?.quantity || 0
-        return quantityInStock - productSome.quantity < 0;
-      }
-    );
+    const isOutOfStock = products.some(productSome => {
+      const quantityInStock =
+        productsFound.find(productFound => productFound.id === productSome.id)
+          ?.quantity || 0;
+      return quantityInStock - productSome.quantity < 0;
+    });
 
     if (isOutOfStock) {
       throw new AppError(
